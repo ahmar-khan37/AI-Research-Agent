@@ -1,12 +1,18 @@
 import random
-import streamlit as st
 import requests
+import streamlit as st
 
-STATUS_URL = "https://ahmarnexora.app.n8n.cloud/webhook/research-status"
+st.set_page_config(
+    page_title="AI Research Agent",
+    page_icon="🔎",
+    layout="wide"
+)
 
 START_URL = "https://ahmarnexora.app.n8n.cloud/webhook/ai-research"
+STATUS_URL = "https://ahmarnexora.app.n8n.cloud/webhook/research-status"
 
-st.set_page_config(page_title="AI Research Agent", page_icon="🔎", layout="wide")
+API_KEY = st.secrets["RESEARCH_API_KEY"]
+HEADERS = {"X-Research-API-Key": API_KEY}
 
 PAIRS = ["🤖", "🚀", "🧠", "🌎", "💡", "🔬"]
 
@@ -52,7 +58,7 @@ st.caption("Research smarter. Play while you wait!")
 with st.form("research_form"):
     topic = st.text_input(
         "What do you want to research?",
-        placeholder="Top AI automation companies in Pakistan",
+        placeholder="Top AI automation companies in Pakistan"
     )
     start = st.form_submit_button("🚀 Start Research")
 
@@ -60,11 +66,14 @@ if start:
     if topic.strip():
         st.session_state.pop("report", None)
         st.session_state.pop("job_id", None)
+        st.session_state.started = False
         st.session_state.research_status = "starting"
+
         try:
             response = requests.post(
                 START_URL,
                 json={"topic": topic.strip()},
+                headers=HEADERS,
                 timeout=30
             )
             response.raise_for_status()
@@ -85,19 +94,16 @@ if start:
 left, right = st.columns([1, 1.4])
 
 with left:
-    st.subheader("📡 Research status")
+    st.subheader("📡 Research Status")
 
     if st.session_state.get("started", False):
         st.write("**Topic:**", st.session_state.topic)
-        if st.session_state.get("job_id"):
-            st.success("🚀 Research started successfully!")
-            st.write("**Job ID:**", st.session_state.job_id)
-            st.info("⏳ Research is running in n8n...")
-        else:
-            st.warning("Research job ID not received yet.")
+        st.write("**Job ID:**", st.session_state.job_id)
+
+        status = st.session_state.get("research_status", "running")
+        st.info(f"Research status: {status}")
     else:
         st.write("Enter a topic and start your research.")
-
 
     if st.session_state.get("job_id"):
         if st.button("🔄 Check Research Status"):
@@ -105,6 +111,7 @@ with left:
                 response = requests.get(
                     STATUS_URL,
                     params={"job_id": st.session_state.job_id},
+                    headers=HEADERS,
                     timeout=30
                 )
                 response.raise_for_status()
@@ -122,8 +129,8 @@ with left:
             except Exception as e:
                 st.error(f"Status check failed: {e}")
 
-    if "report" in st.session_state:
-        st.subheader("Your report")
+    if st.session_state.get("report"):
+        st.subheader("📄 Your Research Report")
         st.markdown(st.session_state.report)
 
 with right:
@@ -134,12 +141,13 @@ with right:
     a.metric("Moves", st.session_state.moves)
     b.metric("Pairs found", len(st.session_state.matched) // 2)
 
-    if st.button("🔄 Restart game"):
+    if st.button("🔄 Restart Game"):
         reset_game()
         st.rerun()
 
     for r in range(3):
         cols = st.columns(4)
+
         for c in range(4):
             i = r * 4 + c
 
@@ -154,8 +162,10 @@ with right:
                 use_container_width=True,
                 disabled=i in st.session_state.matched,
                 on_click=flip,
-                args=(i,),
+                args=(i,)
             )
 
     if len(st.session_state.matched) == 12:
-        st.success(f"🎉 All pairs matched in {st.session_state.moves} moves!")
+        st.success(
+            f"🎉 All pairs matched in {st.session_state.moves} moves!"
+        )
