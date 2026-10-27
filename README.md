@@ -16,6 +16,13 @@ An AI-powered research application built with n8n, Streamlit, and Tavily. It aut
 
 ![AI Research Agent Dashboard](research-dashboard.png)
 
+🎥 Project Demo
+
+▶️ [Watch AI Research Agent Demo](https://github.com/ahmar-khan37/AI-Research-Agent/releases/download/v1.0.0/ai-research-agent-demo.mp4)
+
+The demo shows AI research, live job tracking,
+the Memory Match game, and the final generated report.
+
 🛠️ Tech Stack
 
 | Technology | Purpose |
