@@ -72,7 +72,7 @@ streamlit run app.py
 
  🌐 Live Demo
 
-Live Application: Add your deployed Streamlit app URL here.
+Live Application: [Launch AI Research Agent](https://ai-research-agent-ahmar.streamlit.app/)
 
 > Note: AI research functionality depends on the availability of the n8n backend. If the backend is inactive, the research feature may be unavailable.
 
@@ -95,6 +95,6 @@ This project demonstrates practical experience with:
 - Improved user access controls and rate limiting
 - Enhanced report formatting
 
----
 
-**Built as a hands-on AI automation and application development project.**
+
+Built as a hands-on AI automation and application development project.
